@@ -23,12 +23,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 번호 증가 전략이 데이터베이스를 따라간다.
     private int id;
 
+    @Column(length = 20,unique = true) // 같은 이름으로는 가입 불가
     private String username;
-    private String password;
 
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private String name;
     private String website; // 웹사이트
     private String bio; // 자기 소개
+    @Column(nullable = false)
     private String email;
     private String phone;
     private String gender;

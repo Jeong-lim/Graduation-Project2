@@ -19,6 +19,14 @@
 	</properties>
 	<dependencies>
 
+		<!--전처리 하기 위한 리아브러리-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>2.6.7</version>
+		</dependency>
+
+
 		<!-- qlrm -->
 		<dependency>
 			<groupId>org.qlrm</groupId>
