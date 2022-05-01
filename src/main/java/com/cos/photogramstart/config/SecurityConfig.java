@@ -25,7 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll() // 403은 승인이 되지 않은 사용자
                 .and()
                 .formLogin()
-                .loginPage("/auth/signin")
+                .loginPage("/auth/signin") //GET 인증이 필요한 페이지일 때
+                .loginProcessingUrl("/auth/signin") // POST -> 스프링 시큐리티가 로그인 프로세스 진행
                 .defaultSuccessUrl("/");
 
         // 403이 뜨는 페이지가 떳을 때 login 창으로 바로 넘어가게
