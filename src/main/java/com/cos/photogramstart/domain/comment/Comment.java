@@ -22,10 +22,11 @@ public class Comment {
     @Column(length = 100, nullable = false)
     private String content;
 
-
+    @JoinColumn(name = "userId")
     @ManyToOne(fetch = FetchType.EAGER) //
     private User user;
 
+    @JoinColumn(name = "imageId")
     @ManyToOne(fetch = FetchType.EAGER)
     private Image image;
 
