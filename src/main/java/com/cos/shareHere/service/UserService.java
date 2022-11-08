@@ -16,6 +16,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    public void 회원프로필(int userId) {
+        // SELECT * FROM IMAGE WHERE
+    }
+
     @Transactional
     public User 회원수정(int id, User user) {
         // 1. 영속화
