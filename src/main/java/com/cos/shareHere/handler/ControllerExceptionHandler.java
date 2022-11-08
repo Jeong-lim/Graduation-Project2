@@ -1,6 +1,7 @@
 package com.cos.shareHere.handler;
 
 import com.cos.shareHere.handler.ex.CustomApiException;
+import com.cos.shareHere.handler.ex.CustomException;
 import com.cos.shareHere.handler.ex.CustomValidationApiException;
 import com.cos.shareHere.handler.ex.CustomValidationException;
 import com.cos.shareHere.util.Script;
@@ -14,6 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @ControllerAdvice // 모든 Exception을 낚아채는
 public class ControllerExceptionHandler {
+
+    @ExceptionHandler(CustomException.class) // RuntimeException이 발동하느 모든 Exception을 가로챔
+    public String exception(CustomException e) {
+        return Script.back(e.getMessage());
+    }
 
     @ExceptionHandler(CustomValidationException.class) // RuntimeException이 발동하느 모든 Exception을 가로챔
     public String validationException(CustomValidationException e) {
@@ -37,5 +43,6 @@ public class ControllerExceptionHandler {
     public ResponseEntity<?> apiException(CustomApiException e) {
         return new ResponseEntity<>(new CMRespDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
     }
+
 
 }
