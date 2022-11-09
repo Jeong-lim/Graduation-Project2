@@ -30,6 +30,8 @@ public class UserService {
         // 1. 영속화
         // 1. 무조건 찾았다. get() 2. 못찾았어 Exception 발동 orElseThrow()
         User userEntity = userRepository.findById(id).orElseThrow(() -> { return new CustomValidationApiException("찾을 수 없는 id입니다.");});
+        System.out.println("===============================");
+        userEntity.getImages().get(0);
         // 2. 영속화된 오브젝트를 수정 - 더티체킹 (업데이트 완료)
         userEntity.setName(user.getName());
 
