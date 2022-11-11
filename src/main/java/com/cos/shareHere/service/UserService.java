@@ -1,6 +1,6 @@
 package com.cos.shareHere.service;
 
-import com.cos.shareHere.domain.subscribe.SubscibeRepository;
+import com.cos.shareHere.domain.subscribe.SubscribeRepository;
 import com.cos.shareHere.domain.user.User;
 import com.cos.shareHere.domain.user.UserRepository;
 import com.cos.shareHere.handler.ex.CustomException;
@@ -19,27 +19,27 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private final SubscibeRepository subscibeRepository;
+    private final SubscribeRepository subscribeRepository;
 
     @Transactional(readOnly = true)
     public UserProfileDto 회원프로필(int pageUserId, int principalId) {
         UserProfileDto dto = new UserProfileDto();
 
-        // SELECT * FROM IMAGE WHERE userId = :userId;
-        User userEntity = userRepository.findById(pageUserId).orElseThrow(() -> {
-            throw new CustomException("해당 프로필 페이지는 없는 페이지입니다.");
+        // SELECT * FROM image WHERE userId = :userId;
+        User userEntity = userRepository.findById(pageUserId).orElseThrow(()-> {
+            // throw -> return 으로 변경
+            return new CustomException("해당 프로필 페이지는 없는 페이지입니다.");
         });
 
         dto.setUser(userEntity);
-        dto.setPageOwnerState(pageUserId == principalId); // 1은 페이지 주인 -1은 주인 아님
+        dto.setPageOwnerState(pageUserId == principalId);
         dto.setImageCount(userEntity.getImages().size());
 
-        int subscribeState = subscibeRepository.mSubscribeState(principalId, pageUserId);
-        int subscribeCount = subscibeRepository.mSubscribeCount(pageUserId);
+        int subscribeState =  subscribeRepository.mSubscribeState(principalId, pageUserId);
+        int subscribeCount = subscribeRepository.mSubscribeCount(pageUserId);
 
         dto.setSubscribeState(subscribeState == 1);
         dto.setSubscribeCount(subscribeCount);
-
         return dto;
     }
 

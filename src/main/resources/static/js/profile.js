@@ -32,13 +32,32 @@ function getSubscribeModalItem() {
 
 
 // (3) 구독자 정보 모달에서 구독하기, 구독취소
-function toggleSubscribeModal(obj) {
+function toggleSubscribeModal(toUserId, obj) {
 	if ($(obj).text() === "구독취소") {
-		$(obj).text("구독하기");
-		$(obj).toggleClass("blue");
+
+		$.ajax({
+			type:"delete",
+			url: "/api/subscribe/" + toUserId,
+			dataType:"json"
+		}).done(res => {
+			$(obj).text("구독하기");
+			$(obj).toggleClass("blue");
+		}).fail(error => {
+			console.log("구독취소실패", error);
+		});
 	} else {
-		$(obj).text("구독취소");
-		$(obj).toggleClass("blue");
+
+		$.ajax({
+			type:"delete",
+			url: "/api/subscribe/" + toUserId,
+			dataType:"json"
+		}).done(res => {
+			$(obj).text("구독취소");
+			$(obj).toggleClass("blue");
+		}).fail(error => {
+			console.log("구독하기실패", error);
+		});
+
 	}
 }
 

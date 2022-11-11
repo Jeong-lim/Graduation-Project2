@@ -18,7 +18,7 @@
 						   id="userProfileImageInput" />
 				</form>
 
-				<img class="profile-image" src="/upload/${user.profileImageUrl}"
+				<img class="profile-image" src="/upload/${dto.user.profileImageUrl}"
 					 onerror="this.src='/images/person.jpeg'" id="userProfileImage" />
 
 			</div>
@@ -37,16 +37,16 @@
 					<c:otherwise>
 						<c:choose>
 							<c:when test="${dto.subscribeState}">
-								<button class="cta blue" onclick="toggleSubscribe(this)">구독취소</button>
+								<button class="cta blue" onclick="toggleSubscribe(${dto.user.id}, this)">구독취소</button>
 							</c:when>
 							<c:otherwise>
-								<button class="cta" onclick="toggleSubscribe(this)">구독하기</button>
+								<button class="cta" onclick="toggleSubscribe(${dto.user.id}, this)">구독하기</button>
 							</c:otherwise>
 						</c:choose>
 
+
 					</c:otherwise>
 				</c:choose>
-
 
 
 				<button class="modi" onclick="popup('.modal-info')">
@@ -56,9 +56,9 @@
 
 			<div class="subscribe">
 				<ul>
-					<li><a href="">게시물<span>${dto.imageCount}</span>
+					<li><a href=""> 게시물<span>${dto.imageCount}</span>
 					</a></li>
-					<li><a href="javascript:subscribeInfoModalOpen(${user.id});"> 구독정보<span>${dto.subscribeCount}</span>
+					<li><a href="javascript:subscribeInfoModalOpen(${dto.user.id});"> 구독정보<span>${dto.subscribeCount}</span>
 					</a></li>
 				</ul>
 			</div>
@@ -88,7 +88,7 @@
 						<a href=""> <img src="/upload/${image.postImageUrl}" />
 						</a>
 						<div class="comment">
-							<a href="#" class=""> <i class="fas fa-heart"></i><span>0</span>
+							<a href="#" class=""> <i class="fas fa-heart"></i><span>${image.likeCount}</span>
 							</a>
 						</div>
 					</div>
@@ -104,7 +104,7 @@
 <!--로그아웃, 회원정보변경 모달-->
 <div class="modal-info" onclick="modalInfo()">
 	<div class="modal">
-		<button onclick="location.href='/user/${user.id}/update'">회원정보 변경</button>
+		<button onclick="location.href='/user/${dto.user.id}/update'">회원정보 변경</button>
 		<button onclick="location.href='/logout'">로그아웃</button>
 		<button onclick="closePopup('.modal-info')">취소</button>
 	</div>
@@ -115,7 +115,7 @@
 <div class="modal-image" onclick="modalImage()">
 	<div class="modal">
 		<p>프로필 사진 바꾸기</p>
-		<button onclick="profileImageUpload(${user.id}, ${principal.user.id})">사진 업로드</button>
+		<button onclick="profileImageUpload(${dto.user.id}, ${principal.user.id})">사진 업로드</button>
 		<button onclick="closePopup('.modal-image')">취소</button>
 	</div>
 </div>
