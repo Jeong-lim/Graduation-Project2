@@ -21,14 +21,14 @@ public class UserController {
     @GetMapping("/user/{id}")
     public String profile(@PathVariable int id, Model model) {
         User userEntity = userService.회원프로필(id);
-        model.addAttribute("images", userEntity);
+        model.addAttribute("user", userEntity);
         return "user/profile";
     }
 
     @GetMapping("/user/{id}/update")
     public String update(@PathVariable int id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        System.out.println("세션 정보: " + principalDetails.getUser());
+/*        System.out.println("세션 정보: " + principalDetails.getUser());*/
 
 /*        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         PrincipalDetails mPrincipalDetails = (PrincipalDetails)  auth.getPrincipal();

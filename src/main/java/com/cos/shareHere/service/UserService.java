@@ -7,8 +7,8 @@ import com.cos.shareHere.handler.ex.CustomValidationApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -17,11 +17,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Transactional(readOnly = true)
     public User 회원프로필(int userId) {
         // SELECT * FROM IMAGE WHERE userId = :userId;
         User userEntity = userRepository.findById(userId).orElseThrow(() -> {
             throw new CustomException("해당 프로필 페이지는 없는 페이지입니다.");
         });
+
         return userEntity;
     }
 
