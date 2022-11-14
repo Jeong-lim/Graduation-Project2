@@ -1,13 +1,23 @@
 package com.cos.shareHere.domain.subscribe;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+
 import com.cos.shareHere.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -17,8 +27,8 @@ import java.time.LocalDateTime;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "subscribe_uk",
-                        columnNames = {"fromUserId", "toUserId"} // 실제 데이터베이스의 컬럼명을 적어야된다.
+                        name="subscribe_uk",
+                        columnNames = {"fromUserId", "toUserId"}
                 )
         }
 )
@@ -27,13 +37,13 @@ public class Subscribe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @JoinColumn(name="fromUserId")
+    @JoinColumn(name = "fromUserId") // 이렇게 컬럼명 만들어! 니 맘대로 만들지 말고!!
     @ManyToOne
-    private User fromUser; // 구독하는 애
+    private User fromUser;
 
-    @JoinColumn(name="toUserId")
+    @JoinColumn(name = "toUserId")
     @ManyToOne
-    private User toUser; // 구독 받는 애
+    private User toUser;
 
     private LocalDateTime createDate;
 
@@ -43,3 +53,5 @@ public class Subscribe {
     }
 
 }
+
+

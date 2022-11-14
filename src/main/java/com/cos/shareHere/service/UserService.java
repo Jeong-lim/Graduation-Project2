@@ -6,20 +6,27 @@ import com.cos.shareHere.domain.user.UserRepository;
 import com.cos.shareHere.handler.ex.CustomException;
 import com.cos.shareHere.handler.ex.CustomValidationApiException;
 import com.cos.shareHere.web.dto.user.UserProfileDto;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SubscribeRepository subscribeRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private final SubscribeRepository subscribeRepository;
+    @Value("${file.path}")
+    private String uploadFolder;
+
+
+
 
     @Transactional(readOnly = true)
     public UserProfileDto 회원프로필(int pageUserId, int principalId) {
@@ -40,16 +47,18 @@ public class UserService {
 
         dto.setSubscribeState(subscribeState == 1);
         dto.setSubscribeCount(subscribeCount);
+
+
         return dto;
     }
+
 
     @Transactional
     public User 회원수정(int id, User user) {
         // 1. 영속화
-        // 1. 무조건 찾았다. get() 2. 못찾았어 Exception 발동 orElseThrow()
+        // 1. 무조건 찾았다. 걱정마 get() 2. 못찾았어 익섹션 발동시킬께 orElseThrow()
         User userEntity = userRepository.findById(id).orElseThrow(() -> { return new CustomValidationApiException("찾을 수 없는 id입니다.");});
-        System.out.println("===============================");
-        userEntity.getImages().get(0);
+
         // 2. 영속화된 오브젝트를 수정 - 더티체킹 (업데이트 완료)
         userEntity.setName(user.getName());
 
@@ -61,8 +70,15 @@ public class UserService {
         userEntity.setWebsite(user.getWebsite());
         userEntity.setPhone(user.getPhone());
         userEntity.setGender(user.getGender());
-
-
         return userEntity;
-    } // 더티체킹이 일어나서 업데이트가 완료됨
+    } // 더티체킹이 일어나서 업데이트가 완료됨.
+
+
 }
+
+
+
+
+
+
+

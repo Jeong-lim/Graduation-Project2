@@ -88,7 +88,7 @@
 						<a href=""> <img src="/upload/${image.postImageUrl}" />
 						</a>
 						<div class="comment">
-							<a href="#" class=""> <i class="fas fa-heart"></i><span>${image.likeCount}</span>
+							<a href="#" class=""> <i class="fas fa-heart"></i>
 							</a>
 						</div>
 					</div>
