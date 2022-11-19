@@ -1,6 +1,5 @@
 package com.cos.shareHere.web.dto.user;
 
-
 import com.cos.shareHere.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UserProfileDto {
-    private boolean pageOwnerState;
-    private int imageCount;
-    private boolean subscribeState;
-    private int subscribeCount;
-    private User user;
+	private boolean pageOwnerState;
+	private int imageCount;
+	private boolean subscribeState;
+	private int subscribeCount;
+	private User user;
 }

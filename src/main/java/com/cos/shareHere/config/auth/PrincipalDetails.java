@@ -9,52 +9,52 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Data
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails{
+	
+	private static final long serialVersionUID = 1L;
+	
+	private User user;
+	
+	public PrincipalDetails(User user) {
+		this.user = user;
+	}
 
-    private static final long serialVersionUID = 1L;
+	// 권한 : 한개가 아닐 수 있음. (3개 이상의 권한)
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Collection<GrantedAuthority> collector = new ArrayList<>();
+		collector.add(() -> { return user.getRole();});
+		return collector;
+	}
 
-    private User user;
+	@Override
+	public String getPassword() {
+		return user.getPassword();
+	}
 
-    public PrincipalDetails(User user) {
-        this.user = user;
-    }
+	@Override
+	public String getUsername() {
+		return user.getUsername();
+	}
 
-    // 권한 : 한개가 아닐 수 있음 (3개 이상의 권한일 수도)
-   @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-        Collection<GrantedAuthority> collector = new ArrayList<>();
-        collector.add(() -> { return user.getRole();}); // 자바에서는 함수를 바로 못넣음
-        return collector;
-    } // 권한을 가져오는 함수 User의 role
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
-    @Override
-    public String getUsername() {
-        return user.getUsername();
-    }
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }
