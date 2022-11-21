@@ -19,6 +19,7 @@ function storyLoad() {
 		res.data.content.forEach((image)=>{
 			let storyItem = getStoryItem(image);
 			$("#storyList").append(storyItem);
+			console.log(storyItem);
 		});
 	}).fail(error => {
 		console.log("오류", error);
