@@ -1,53 +1,70 @@
 package com.cos.shareHere.domain.image;
 
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-
+import com.cos.shareHere.domain.comment.Comment;
+import com.cos.shareHere.domain.likes.Likes;
 import com.cos.shareHere.domain.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class Image { // N,   1
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	private String caption; // 오늘 나 너무 피곤해!!
-	private String postImageUrl; // 사진을 전송받아서 그 사진을 서버에 특정 폴더에 저장 - DB에 그 저장된 경로를 insert
-	
-	@JsonIgnoreProperties({"images"})
-	@JoinColumn(name = "userId")
-	@ManyToOne(fetch = FetchType.EAGER) // 이미지를 select하면 조인해서 User정보를 같이 들고옴
-	private User user; // 1,  1
-	
-	// 이미지 좋아요
-	
-	// 댓글
-	
-	private LocalDateTime createDate;
-	
-	@PrePersist
-	public void createDate() {
-		this.createDate = LocalDateTime.now();
-	}
-	
-	
-	
+public class Image {
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    private Integer id;
+    
+    // 해당 image를 설명하는 영역
+    private String caption;
+
+    // image가 서버로 전송되어 저장되는 경로
+    private String postImageUrl;
+
+    // image를 누가 올렸는지 알기 위해 받은 유저오브젝트
+    @JsonIgnoreProperties({"images"})
+    @JoinColumn(name = "userId")
+    @ManyToOne
+    private User user;
+
+    // 이미지 좋아요
+    @JsonIgnoreProperties({"image"})
+    @OneToMany(mappedBy = "image")
+    private List<Likes> likes;
+
+    // 이미지 좋아요 여부 상태
+    @Transient // DB에 해당 컬럼을 생성하지 않게 만드는 어노테이션
+    private boolean likeState;
+
+    // 이미지 좋아요 카운팅
+    @Transient
+    private Integer likeCount;
+
+    // 댓글 정보
+    @OrderBy("id DESC")
+    @JsonIgnoreProperties({"image"})
+    @OneToMany(mappedBy = "image")
+    private List<Comment> comments;
+
+    private LocalDateTime createDate; // 데이터가 입력된 시간.
+
+    @PrePersist
+    public void createDate() {
+        this.createDate = LocalDateTime.now();
+    }
+    // 오브젝트를 sysout할 때, 무한참조가 발생하는 User오브젝트를 삭제한 toString
+    // @Override
+    // public String toString() {
+    //     return "Image [caption=" + caption + ", createDate=" + createDate + ", id=" + id + ", postImageUrl="
+    //             + postImageUrl + "]";
+    // }
 }

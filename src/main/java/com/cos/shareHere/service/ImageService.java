@@ -1,56 +1,93 @@
 package com.cos.shareHere.service;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
-
 import com.cos.shareHere.config.auth.PrincipalDetails;
 import com.cos.shareHere.domain.image.Image;
 import com.cos.shareHere.domain.image.ImageRepository;
 import com.cos.shareHere.web.dto.image.ImageUploadDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import lombok.RequiredArgsConstructor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
 public class ImageService {
-	
-	private final ImageRepository imageRepository;
-	
-	@Transactional(readOnly = true) // 영속성 컨텍스트 변경 감지를 해서, 더티체킹, flush(반영) X
-	public Page<Image> 이미지스토리(int principalId, Pageable pageable){
-		Page<Image> images = imageRepository.mStory(principalId, pageable);
-		return images;
-	}
-	
-	
-	@Value("${file.path}")
-	private String uploadFolder;
-	
-	@Transactional
-	public void 사진업로드(ImageUploadDto imageUploadDto, PrincipalDetails principalDetails) {
-		UUID uuid = UUID.randomUUID(); // uuid
-		String imageFileName = uuid+"_"+imageUploadDto.getFile().getOriginalFilename(); // 1.jpg
-		System.out.println("이미지 파일이름 : "+imageFileName);
-		
-		Path imageFilePath = Paths.get(uploadFolder+imageFileName);
-		
-		// 통신, I/O -> 예외가 발생할 수 있다.
-		try {
-			Files.write(imageFilePath, imageUploadDto.getFile().getBytes());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		// image 테이블에 저장
-		Image image = imageUploadDto.toEntity(imageFileName, principalDetails.getUser()); // 5cf6237d-c404-43e5-836b-e55413ed0e49_bag.jpeg
-		imageRepository.save(image);
-	}
+
+    // 6. 이미지가 저장되는 경로 호출하기
+    @Value("${file.path}")
+    private String uploadFolder;
+    
+    private final ImageRepository imageRepository;
+
+    @Transactional(readOnly = true)
+    public List<Image> 모든이미지(Integer principalId, Pageable pageable) {
+        List<Image> images = imageRepository.mStoryAll(pageable);
+        images.forEach((image) -> {
+            image.setLikeCount(image.getLikes().size());
+            image.getLikes().forEach((like) -> {
+                if (like.getUser().getId() == principalId) {
+                    image.setLikeState(true);
+                }
+            });
+        });
+
+        return images;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Image> 인기사진() {
+        return imageRepository.mPopular();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Image> 이미지스토리(Integer principalId, Pageable pageable) {
+        List<Image> images = imageRepository.mStory(principalId, pageable);
+
+        // // images의 좋아요 상태 담기(이중for문)
+        images.forEach((image) -> {
+            // 좋아요 카운트 담기
+            image.setLikeCount(image.getLikes().size());
+
+            image.getLikes().forEach((like) -> {
+                if (like.getUser().getId() == principalId) {
+                    image.setLikeState(true);
+                }
+            });
+        });
+
+        return images;
+    }
+
+    @Transactional
+    public void 사진업로드(ImageUploadDto imageUploadDto,
+                      PrincipalDetails principalDetails) {
+        // 2. UUID 객체를 생성한다.
+        UUID uuid = UUID.randomUUID();
+        // 1. 업로드 되는 원본 파일명을 imageFileName라고 지정한다.
+        // 3. UUID를 더한 값으로 지정한다.
+        String imageFileName = uuid + "_" + imageUploadDto.getFile().getOriginalFilename();
+        // 4. UUID가 적용된 파일명 확인하기
+        // System.out.println(imageFileName);
+        // 5. image 저장 경로 지정하기
+        Path imageFilePath = Paths.get(uploadFolder + imageFileName);
+        
+        // 7. 파일을 업로드하기
+        try {
+            Files.write(imageFilePath, imageUploadDto.getFile().getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 8. image 파일경로를 DB에 INSERT하기
+        Image image = imageUploadDto.toEntity(imageFileName, principalDetails.getUser());
+        imageRepository.save(image);
+        // System.out.println("imageEntity : "+imageEntity);
+    }
 }
